@@ -68,7 +68,13 @@ public class Solver {
         // a trivial greedy algorithm for filling the knapsack
         // it takes items in-order until the knapsack is full
         int[] taken = new int[items];
-        int value = DPSolver(capacity, items, values, weights, taken);
+        int value = 0;
+
+        // calculate an optimal knapsack solution
+        if ((long)items * (long)capacity < 100000000L)
+            value = DPSolver(capacity, items, values, weights, taken);
+        else 
+            value = BBSolver(capacity, items, values, weights, taken);
 
         
         // prepare the solution in the specified output format
@@ -77,6 +83,10 @@ public class Solver {
             System.out.print(taken[i]+" ");
         }
         System.out.println("");        
+    }
+
+    public static int BBSolver (int capacity, int items, int[] values, int[] weights, int[] taken) {
+        return 0;
     }
 
     public static int DPSolver (int capacity, int items, int[] values, int[] weights, int[] taken) {
