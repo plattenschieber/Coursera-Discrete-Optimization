@@ -79,7 +79,7 @@ public class Solver {
             for (int j=0; j <= capacity; j++) {
                 if (weights[i-1]<=j) {
                     //                    old best value,  sum of current weight and best value with reduced capacity
-                    table[j][i] = Math.max(table[j][i-1],  table[j-weights[i-1]][i-1] + weights[i-1]);
+                    table[j][i] = Math.max(table[j][i-1],  table[j-weights[i-1]][i-1] + values[i-1]);
                 }
                 // if it doesn't fit, we take the best value so far
                 else table[j][i] = table[j][i-1];
