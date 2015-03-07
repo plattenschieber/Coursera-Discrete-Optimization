@@ -71,14 +71,33 @@ public class Solver {
         int weight = 0;
         int[] taken = new int[items];
 
-        for(int i=0; i < items; i++){
-            if(weight + weights[i] <= capacity){
-                taken[i] = 1;
-                value += values[i];
-                weight += weights[i];
-            } else {
-                taken[i] = 0;
+        // generate dynamic table and fill second column //(leave the very first column with no item)
+        int[][] table = new int[capacity+1][items+1];
+
+        // fill the table step-by-step
+        for(int i=1; i <= items; i++){
+            for (int j=0; j <= capacity; j++) {
+                if (weights[i-1]<=j) {
+                    //                    old best value,  sum of current weight and best value with reduced capacity
+                    table[j][i] = Math.max(table[j][i-1],  table[j-weights[i-1]][i-1] + weights[i-1]);
+                }
+                // if it doesn't fit, we take the best value so far
+                else table[j][i] = table[j][i-1];
             }
+        }
+
+        // backtrace through the table
+        int currentCap = capacity;
+        for (int i=items; i > 0; i--){
+            if (table[currentCap][i] > table[currentCap][i-1]){
+                taken[i-1] = 1;
+                value += values[i-1];
+                weight += weights[i-1];
+                // remove capacity from knapsack
+                currentCap -= weights[i-1];
+            } 
+            // this item hasn't been added to our knapsack
+            else taken[i-1] = 0;
         }
         
         // prepare the solution in the specified output format
