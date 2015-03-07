@@ -67,12 +67,23 @@ public class Solver {
 
         // a trivial greedy algorithm for filling the knapsack
         // it takes items in-order until the knapsack is full
-        int value = 0;
-        int weight = 0;
         int[] taken = new int[items];
+        int value = DPSolver(capacity, items, values, weights, taken);
 
+        
+        // prepare the solution in the specified output format
+        System.out.println(value+" 1");
+        for(int i=0; i < items; i++){
+            System.out.print(taken[i]+" ");
+        }
+        System.out.println("");        
+    }
+
+    public static int DPSolver (int capacity, int items, int[] values, int[] weights, int[] taken) {
         // generate dynamic table and fill second column //(leave the very first column with no item)
         int[][] table = new int[capacity+1][items+1];
+        int weight = 0;
+        int value = 0;
 
         // fill the table step-by-step
         for(int i=1; i <= items; i++){
@@ -99,12 +110,7 @@ public class Solver {
             // this item hasn't been added to our knapsack
             else taken[i-1] = 0;
         }
-        
-        // prepare the solution in the specified output format
-        System.out.println(value+" 1");
-        for(int i=0; i < items; i++){
-            System.out.print(taken[i]+" ");
-        }
-        System.out.println("");        
+
+        return value;
     }
 }
