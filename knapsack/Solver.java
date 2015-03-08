@@ -82,7 +82,6 @@ public class Solver {
         // a trivial greedy algorithm for filling the knapsack
         // it takes numItems in-order until the knapsack is full
         taken = new int[numItems];
-        value = 0;
 
         // calculate an optimal knapsack solution
         if ((long)numItems * (long)capacity < 100000000L)
@@ -184,7 +183,6 @@ public class Solver {
     private int DPSolver () {
         // generate dynamic table and fill second column //(leave the very first column with no item)
         int[][] table = new int[capacity+1][numItems+1];
-        int weight = 0;
         value = 0;
 
         // fill the table step-by-step
@@ -205,7 +203,6 @@ public class Solver {
             if (table[currentCap][i] > table[currentCap][i-1]){
                 taken[i-1] = 1;
                 value += values[i-1];
-                weight += weights[i-1];
                 // remove capacity from knapsack
                 currentCap -= weights[i-1];
             } 
