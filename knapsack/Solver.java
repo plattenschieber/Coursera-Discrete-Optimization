@@ -94,6 +94,16 @@ public class Solver {
         System.out.println("");        
     }
 
+    private void calcEstimate (Node node)
+    {
+        // can be done faster: only update remaining tail 
+        node.estimate = 0;
+        for (int i=0; i<numItems; i++)
+            // all choosen items with i<=level and ALL items comming
+            if (i>node.level || node.path[i] == 1)
+                node.estimate += values[i];
+    }
+
     private int BBSolver () {
         return 0;
     }
