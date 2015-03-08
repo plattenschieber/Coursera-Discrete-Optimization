@@ -18,6 +18,7 @@ public class Solver {
     private int[] taken;
     private int value;
 	private Stack<Node> BBTree;
+    private Node solution;
 
     
     /**
