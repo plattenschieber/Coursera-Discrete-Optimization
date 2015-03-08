@@ -7,6 +7,13 @@ import java.util.ArrayList;
  *
  */
 public class Solver {
+
+    private int numItems;
+    private int capacity;
+    private int[] values;
+    private int[] weights;
+    private int[] taken;
+    private int value;
     
     /**
      * The main class
@@ -53,13 +60,13 @@ public class Solver {
         
         // parse the data in the file
         String[] firstLine = lines.get(0).split("\\s+");
-        int items = Integer.parseInt(firstLine[0]);
-        int capacity = Integer.parseInt(firstLine[1]);
+        numItems = Integer.parseInt(firstLine[0]);
+        capacity = Integer.parseInt(firstLine[1]);
 
-        int[] values = new int[items];
-        int[] weights = new int[items];
+        values = new int[numItems];
+        weights = new int[numItems];
 
-        for(int i=1; i < items+1; i++){
+        for(int i=1; i < numItems+1; i++){
           String line = lines.get(i);
           String[] parts = line.split("\\s+");
 
@@ -68,12 +75,12 @@ public class Solver {
         }
 
         // a trivial greedy algorithm for filling the knapsack
-        // it takes items in-order until the knapsack is full
-        int[] taken = new int[items];
-        int value = 0;
+        // it takes numItems in-order until the knapsack is full
+        taken = new int[numItems];
+        value = 0;
 
         // calculate an optimal knapsack solution
-        if ((long)items * (long)capacity < 100000000L)
+        if ((long)numItems * (long)capacity < 100000000L)
             value = DPSolver();
         else 
             value = BBSolver();
@@ -81,7 +88,7 @@ public class Solver {
         
         // prepare the solution in the specified output format
         System.out.println(value+" 1");
-        for(int i=0; i < items; i++){
+        for(int i=0; i < numItems; i++){
             System.out.print(taken[i]+" ");
         }
         System.out.println("");        
@@ -93,12 +100,12 @@ public class Solver {
 
     private int DPSolver () {
         // generate dynamic table and fill second column //(leave the very first column with no item)
-        int[][] table = new int[capacity+1][items+1];
+        int[][] table = new int[capacity+1][numItems+1];
         int weight = 0;
-        int value = 0;
+        value = 0;
 
         // fill the table step-by-step
-        for(int i=1; i <= items; i++){
+        for(int i=1; i <= numItems; i++){
             for (int j=0; j <= capacity; j++) {
                 if (weights[i-1]<=j) {
                     //                    old best value,  sum of current weight and best value with reduced capacity
@@ -111,7 +118,7 @@ public class Solver {
 
         // backtrace through the table
         int currentCap = capacity;
-        for (int i=items; i > 0; i--){
+        for (int i=numItems; i > 0; i--){
             if (table[currentCap][i] > table[currentCap][i-1]){
                 taken[i-1] = 1;
                 value += values[i-1];
