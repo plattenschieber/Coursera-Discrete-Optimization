@@ -41,12 +41,14 @@ public class Solver {
      */
     private void solve(String[] args) throws IOException {
         String fileName = null;
-        
+        boolean isDP = false;
         // get the temp file name
         for(String arg : args){
             if(arg.startsWith("-file=")){
                 fileName = arg.substring(6);
             } 
+            if (arg.equalsIgnoreCase("-dp"))
+            	isDP = true;
         }
         if(fileName == null)
             return;
@@ -87,7 +89,7 @@ public class Solver {
         taken = new int[numItems];
 
         // calculate an optimal knapsack solution
-        if ((long)numItems * (long)capacity < 100000000L)
+        if ((long)numItems * (long)capacity < 100000000L && !isDP)
             value = DPSolver();
         else {
             BBTree = new Stack<Node>();
