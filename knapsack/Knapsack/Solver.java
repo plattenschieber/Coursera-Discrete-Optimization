@@ -138,8 +138,8 @@ public class Solver {
         
         @Override
         public int compareTo(Node other) {
-        	if (this.estimate > other.estimate) return 1;
-        	else if(this.estimate < other.estimate) return -1;
+        	if (this.estimate > other.estimate) return -1;
+        	else if(this.estimate < other.estimate) return 1;
         	else return 0;
         }
     }
@@ -190,7 +190,6 @@ public class Solver {
             calcEstimate(right);
             if (right.estimate > value)
                 BBTree.add(right);
-
         }
         return solution.value;
     }
