@@ -139,6 +139,10 @@ public class Solver {
 
     private void calcEstimate (Node node)
     {
+    	if (node.accWeight > kpCapacity) {
+    		node.estimate = 0;
+    		return;
+    	}
         // in case we don't take the current node, remove its value 
         if (node.path[node.level] == 0)
         	node.estimate -= values[node.level];
