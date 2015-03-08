@@ -3,7 +3,7 @@ package Knapsack;
 import java.io.*;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Stack;
+import java.util.PriorityQueue;
 import java.util.stream.IntStream;
 
 
@@ -19,7 +19,7 @@ public class Solver {
     private int[] weights;
     private int[] taken;
     private int value;
-	private Stack<Node> BBTree;
+	private PriorityQueue<Node> BBTree;
     private Node solution;
 
     
@@ -92,7 +92,7 @@ public class Solver {
         if ((long)numItems * (long)capacity < 100000000L && !isDP)
             value = DPSolver();
         else {
-            BBTree = new Stack<Node>();
+            BBTree = new PriorityQueue<Node>();
             value = BBSolver();
             taken = solution.path;
         }
@@ -150,10 +150,10 @@ public class Solver {
         rootNode.estimate = IntStream.of(values).sum();
 
         // add root to tree
-        BBTree.push(rootNode);
+        BBTree.add(rootNode);
 
         while (!BBTree.isEmpty()) {
-            Node node = BBTree.pop();
+            Node node = BBTree.poll();
             int level = -1;
 
             // we expand the tree only in case of an good estimate 
@@ -174,7 +174,7 @@ public class Solver {
             // only add left node if the estimate is bigger than the current value
             calcEstimate(left);
             if (left.estimate > value)
-                BBTree.push(left);
+                BBTree.add(left);
 
             // check 'right' node (if items is not added to knapsack)
             Node right = new Node(node.value, node.weight, node.estimate, level, node.path);
@@ -182,7 +182,7 @@ public class Solver {
             // only add right node if the estimate is bigger than the current value
             calcEstimate(right);
             if (right.estimate > value)
-                BBTree.push(right);
+                BBTree.add(right);
 
         }
         return solution.value;
