@@ -94,6 +94,30 @@ public class Solver {
         System.out.println("");        
     }
 
+    private class Node {
+        private int value = 0;
+        private int weight = 0;
+        private int estimate = 0;
+        private int level = 0;
+        private int[] path;
+
+        private Node () {}
+        private Node (int _value, int _weight, int _estimate, int _level, int[] _path) {
+            this.value = _value;
+            this.weight = _weight;
+            this.estimate = _estimate;
+            this.level = _level;
+            this.path = _path.clone();
+        }
+        private Node (Node _node) {
+            this.value = _node.value;
+            this.weight = _node.weight;
+            this.estimate = _node.estimate;
+            this.level = _node.level;
+            this.path = _node.path.clone();
+        }
+    }
+
     private void calcEstimate (Node node)
     {
         // can be done faster: only update remaining tail 
