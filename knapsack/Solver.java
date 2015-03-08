@@ -1,6 +1,9 @@
 import java.io.*;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.PriorityQueue;
+import java.util.stream.IntStream;
+
 
 /**
  * The class <code>Solver</code> is an implementation of a greedy algorithm to solve the knapsack problem.
@@ -14,6 +17,8 @@ public class Solver {
     private int[] weights;
     private int[] taken;
     private int value;
+	private PriorityQueue<Node> BBTree;
+
     
     /**
      * The main class
@@ -129,6 +134,14 @@ public class Solver {
     }
 
     private int BBSolver () {
+        Node rootNode = new Node();
+        // calculate the most basic estimate (relax the capacity constraint completely)
+        rootNode.estimate = IntStream.of(values).sum();
+        rootNode.value = 0;
+
+        // add root to tree
+        BBTree.add(rootNode);
+
         return 0;
     }
 
