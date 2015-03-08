@@ -12,8 +12,10 @@ public class Solver {
      * The main class
      */
     public static void main(String[] args) {
+
+        Solver solver = new Solver();
         try {
-            solve(args);
+            solver.solve(args);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -22,7 +24,7 @@ public class Solver {
     /**
      * Read the instance, solve it, and print the solution in the standard output
      */
-    public static void solve(String[] args) throws IOException {
+    private void solve(String[] args) throws IOException {
         String fileName = null;
         
         // get the temp file name
@@ -72,9 +74,9 @@ public class Solver {
 
         // calculate an optimal knapsack solution
         if ((long)items * (long)capacity < 100000000L)
-            value = DPSolver(capacity, items, values, weights, taken);
+            value = DPSolver();
         else 
-            value = BBSolver(capacity, items, values, weights, taken);
+            value = BBSolver();
 
         
         // prepare the solution in the specified output format
@@ -85,11 +87,11 @@ public class Solver {
         System.out.println("");        
     }
 
-    public static int BBSolver (int capacity, int items, int[] values, int[] weights, int[] taken) {
+    private int BBSolver () {
         return 0;
     }
 
-    public static int DPSolver (int capacity, int items, int[] values, int[] weights, int[] taken) {
+    private int DPSolver () {
         // generate dynamic table and fill second column //(leave the very first column with no item)
         int[][] table = new int[capacity+1][items+1];
         int weight = 0;
