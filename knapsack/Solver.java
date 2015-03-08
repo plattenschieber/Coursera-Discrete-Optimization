@@ -108,6 +108,13 @@ public class Solver {
         private int[] path;
 
         private Node () {}
+        private Node (int size) {
+        	this.value = 0;
+        	this.weight = 0;
+        	this.estimate = 0;
+        	this.level = -1;
+        	this.path = new int[size];
+        }
         private Node (int _value, int _weight, int _estimate, int _level, int[] _path) {
             this.value = _value;
             this.weight = _weight;
@@ -135,7 +142,7 @@ public class Solver {
     }
 
     private int BBSolver () {
-        Node rootNode = new Node();
+        Node rootNode = new Node(numItems);
         // calculate the most basic estimate (relax the capacity constraint completely)
         rootNode.estimate = IntStream.of(values).sum();
         rootNode.value = 0;
