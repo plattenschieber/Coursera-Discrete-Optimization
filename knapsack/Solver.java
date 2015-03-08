@@ -1,7 +1,7 @@
 import java.io.*;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.PriorityQueue;
+import java.util.Stack;
 import java.util.stream.IntStream;
 
 
@@ -17,7 +17,7 @@ public class Solver {
     private int[] weights;
     private int[] taken;
     private int value;
-	private PriorityQueue<Node> BBTree;
+	private Stack<Node> BBTree;
 
     
     /**
@@ -140,11 +140,11 @@ public class Solver {
         rootNode.value = 0;
 
         // add root to tree
-        BBTree.add(rootNode);
+        BBTree.push(rootNode);
 
         while (!BBTree.isEmpty()) {
-            Node node = BBTree.poll();
             int level = 0;
+            Node node = BBTree.pop();
 
             if (node.estimate > value)
                 level = node.level+1;
@@ -160,7 +160,7 @@ public class Solver {
             // only add left node if the estimate is bigger than the current value
             calcEstimate(left);
             if (left.estimate > value)
-                BBTree.add(left);
+                BBTree.push(left);
 
             // check 'right' node (if items is not added to knapsack)
             Node right = new Node(node.value, node.weight, node.estimate, level, node.path);
@@ -168,7 +168,7 @@ public class Solver {
             // only add right node if the estimate is bigger than the current value
             calcEstimate(right);
             if (right.estimate > value)
-                BBTree.add(right);
+                BBTree.push(right);
 
         }
         return 0;
