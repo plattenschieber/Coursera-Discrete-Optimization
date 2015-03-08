@@ -149,8 +149,17 @@ public class Solver {
             Node node = BBTree.pop();
             int level = -1;
 
-            if (node.estimate > value)
+            // we expand the tree only in case of an good estimate 
+            if (node.level+1 < numItems && node.estimate > value)
                 level = node.level+1;
+            // we are on the last level, check if it's the best solution so far
+            else if(node.weight <= capacity && node.value > value){
+                	value = node.value;
+                    solution = new Node(node);
+                    continue;
+            }
+            // last level and not feasible or bounded by estimate
+            else continue;
             
             // check 'left' node (if item is added to knapsack)
             Node left = new Node(node.value + values[level], node.weight + weights[level], node.estimate, level, node.path);
