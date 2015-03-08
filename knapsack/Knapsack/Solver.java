@@ -89,10 +89,11 @@ public class Solver {
         // calculate an optimal knapsack solution
         if ((long)numItems * (long)capacity < 100000000L)
             value = DPSolver();
-        else 
+        else {
             BBTree = new Stack<Node>();
             value = BBSolver();
             taken = solution.path;
+        }
 
         
         // prepare the solution in the specified output format
