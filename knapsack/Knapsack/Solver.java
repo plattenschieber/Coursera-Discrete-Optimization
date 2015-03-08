@@ -106,7 +106,7 @@ public class Solver {
         System.out.println("");        
     }
 
-    private class Node {
+    private class Node implements Comparable<Node>{
         private int value = 0;
         private int weight = 0;
         private int estimate = 0;
@@ -134,6 +134,13 @@ public class Solver {
             this.estimate = _node.estimate;
             this.level = _node.level;
             this.path = _node.path.clone();
+        }
+        
+        @Override
+        public int compareTo(Node other) {
+        	if (this.estimate > other.estimate) return 1;
+        	else if(this.estimate < other.estimate) return -1;
+        	else return 0;
         }
     }
 
