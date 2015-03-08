@@ -104,7 +104,7 @@ public class Solver {
         private int value = 0;
         private int weight = 0;
         private int estimate = 0;
-        private int level = 0;
+        private int level = -1;
         private int[] path;
 
         private Node () {}
@@ -145,14 +145,13 @@ public class Solver {
         Node rootNode = new Node(numItems);
         // calculate the most basic estimate (relax the capacity constraint completely)
         rootNode.estimate = IntStream.of(values).sum();
-        rootNode.value = 0;
 
         // add root to tree
         BBTree.push(rootNode);
 
         while (!BBTree.isEmpty()) {
-            int level = 0;
             Node node = BBTree.pop();
+            int level = -1;
 
             if (node.estimate > value)
                 level = node.level+1;
@@ -172,7 +171,7 @@ public class Solver {
 
             // check 'right' node (if items is not added to knapsack)
             Node right = new Node(node.value, node.weight, node.estimate, level, node.path);
-            right.path[level] = 1;
+            right.path[level] = 0; // redundant, but readable
             // only add right node if the estimate is bigger than the current value
             calcEstimate(right);
             if (right.estimate > value)
