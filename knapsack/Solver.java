@@ -165,11 +165,6 @@ public class Solver {
             // check 'left' node (if item is added to knapsack)
             Node left = new Node(node.value + values[level], node.weight + weights[level], node.estimate, level, node.path);
             left.path[level] = 1;
-            // only in the left case, we add the value and update our taken vector 
-            if (left.weight <= capacity && left.value > value){
-                value = left.value;
-                taken[level] = 1;
-            }
             // only add left node if the estimate is bigger than the current value
             calcEstimate(left);
             if (left.estimate > value)
