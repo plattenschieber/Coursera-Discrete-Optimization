@@ -89,6 +89,7 @@ public class Solver {
         else 
             BBTree = new Stack<Node>();
             value = BBSolver();
+            taken = solution.path;
 
         
         // prepare the solution in the specified output format
@@ -183,7 +184,7 @@ public class Solver {
                 BBTree.push(right);
 
         }
-        return 0;
+        return solution.value;
     }
 
     private int DPSolver () {
