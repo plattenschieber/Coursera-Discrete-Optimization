@@ -14,11 +14,11 @@ import java.util.stream.IntStream;
 public class Solver {
 
     private int numItems;
-    private int capacity;
+    private int kpCapacity;
+    private int kpValue;
     private int[] values;
     private int[] weights;
     private int[] taken;
-    private int value;
 	private Stack<Node> BBTree;
     private Node solution;
 
@@ -71,7 +71,7 @@ public class Solver {
         // parse the data in the file
         String[] firstLine = lines.get(0).split("\\s+");
         numItems = Integer.parseInt(firstLine[0]);
-        capacity = Integer.parseInt(firstLine[1]);
+        kpCapacity = Integer.parseInt(firstLine[1]);
 
         values = new int[numItems];
         weights = new int[numItems];
@@ -89,17 +89,17 @@ public class Solver {
         taken = new int[numItems];
 
         // calculate an optimal knapsack solution
-        if ((long)numItems * (long)capacity < 100000000L && !isDP)
-            value = DPSolver();
+        if ((long)numItems * (long)kpCapacity < 100000000L && !isDP)
+            kpValue = DPSolver();
         else {
             BBTree = new Stack<Node>();
-            value = BBSolver();
+            kpValue = BBSolver();
             taken = solution.path;
         }
 
         
         // prepare the solution in the specified output format
-        System.out.println(value+" 1");
+        System.out.println(kpValue+" 1");
         for(int i=0; i < numItems; i++){
             System.out.print(taken[i]+" ");
         }
@@ -107,30 +107,30 @@ public class Solver {
     }
 
     private class Node {
-        private int value = 0;
-        private int weight = 0;
+        private int accValue = 0;
+        private int accWeight = 0;
         private int estimate = 0;
         private int level = -1;
         private int[] path;
 
         private Node () {}
         private Node (int size) {
-        	this.value = 0;
-        	this.weight = 0;
+        	this.accValue = 0;
+        	this.accWeight = 0;
         	this.estimate = 0;
         	this.level = -1;
         	this.path = new int[size];
         }
         private Node (int _value, int _weight, int _estimate, int _level, int[] _path) {
-            this.value = _value;
-            this.weight = _weight;
+            this.accValue = _value;
+            this.accWeight = _weight;
             this.estimate = _estimate;
             this.level = _level;
             this.path = _path.clone();
         }
         private Node (Node _node) {
-            this.value = _node.value;
-            this.weight = _node.weight;
+            this.accValue = _node.accValue;
+            this.accWeight = _node.accWeight;
             this.estimate = _node.estimate;
             this.level = _node.level;
             this.path = _node.path.clone();
@@ -161,11 +161,11 @@ public class Solver {
             int level = -1;
 
             // we expand the tree only in case of an good estimate 
-            if (node.level+1 < numItems && node.estimate > value)
+            if (node.level+1 < numItems && node.estimate > kpValue)
                 level = node.level+1;
             // we are on the last level, check if it's the best solution so far
-            else if(node.weight <= capacity && node.value > value){
-                	value = node.value;
+            else if(node.accWeight <= kpCapacity && node.accValue > kpValue){
+                	kpValue = node.accValue;
                     solution = new Node(node);
                     continue;
             }
@@ -173,35 +173,35 @@ public class Solver {
             else continue;
             
             // check 'left' node (if item is added to knapsack)
-            Node left = new Node(node.value + values[level], node.weight + weights[level], node.estimate, level, node.path);
+            Node left = new Node(node.accValue + values[level], node.accWeight + weights[level], node.estimate, level, node.path);
             left.path[level] = 1;
             // only add left node if the estimate is bigger than the current value
             calcEstimate(left);
-            if (left.estimate > value)
+            if (left.estimate > kpValue)
                 BBTree.push(left);
 
             // check 'right' node (if items is not added to knapsack)
-            Node right = new Node(node.value, node.weight, node.estimate, level, node.path);
+            Node right = new Node(node.accValue, node.accWeight, node.estimate, level, node.path);
             right.path[level] = 0; // redundant, but readable
             // only add right node if the estimate is bigger than the current value
             calcEstimate(right);
-            if (right.estimate > value)
+            if (right.estimate > kpValue)
                 BBTree.push(right);
 
         }
-        return solution.value;
+        return solution.accValue;
     }
 
     private int DPSolver () {
         // generate dynamic table and fill second column //(leave the very first column with no item)
-        int[][] table = new int[capacity+1][numItems+1];
-        value = 0;
+        int[][] table = new int[kpCapacity+1][numItems+1];
+        kpValue = 0;
 
         // fill the table step-by-step
         for(int i=1; i <= numItems; i++){
-            for (int j=0; j <= capacity; j++) {
+            for (int j=0; j <= kpCapacity; j++) {
                 if (weights[i-1]<=j) {
-                    //                    old best value,  sum of current weight and best value with reduced capacity
+                    //                    old best value,  sum of current accumulatedWeight and best value with reduced capacity
                     table[j][i] = Math.max(table[j][i-1],  table[j-weights[i-1]][i-1] + values[i-1]);
                 }
                 // if it doesn't fit, we take the best value so far
@@ -210,11 +210,11 @@ public class Solver {
         }
 
         // backtrace through the table
-        int currentCap = capacity;
+        int currentCap = kpCapacity;
         for (int i=numItems; i > 0; i--){
             if (table[currentCap][i] > table[currentCap][i-1]){
                 taken[i-1] = 1;
-                value += values[i-1];
+                kpValue += values[i-1];
                 // remove capacity from knapsack
                 currentCap -= weights[i-1];
             } 
@@ -222,6 +222,6 @@ public class Solver {
             else taken[i-1] = 0;
         }
 
-        return value;
+        return kpValue;
     }
 }
