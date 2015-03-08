@@ -132,12 +132,9 @@ public class Solver {
 
     private void calcEstimate (Node node)
     {
-        // can be done faster: only update remaining tail 
-        node.estimate = 0;
-        for (int i=0; i<numItems; i++)
-            // all choosen items with i<=level and ALL items comming
-            if (i>node.level || node.path[i] == 1)
-                node.estimate += values[i];
+        // in case we don't take the current node, remove its value 
+        if (node.path[node.level] == 0)
+        	node.estimate -= values[node.level];
     }
 
     private int BBSolver () {
