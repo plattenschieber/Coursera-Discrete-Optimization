@@ -142,6 +142,35 @@ public class Solver {
         // add root to tree
         BBTree.add(rootNode);
 
+        while (!BBTree.isEmpty()) {
+            Node node = BBTree.poll();
+            int level = 0;
+
+            if (node.estimate > value)
+                level = node.level+1;
+            
+            // check 'left' node (if item is added to knapsack)
+            Node left = new Node(node.value + values[level], node.weight + weights[level], node.estimate, level, node.path);
+            left.path[level] = 1;
+            // only in the left case, we add the value and update our taken vector 
+            if (left.weight <= capacity && left.value > value){
+                value = left.value;
+                taken[level] = 1;
+            }
+            // only add left node if the estimate is bigger than the current value
+            calcEstimate(left);
+            if (left.estimate > value)
+                BBTree.add(left);
+
+            // check 'right' node (if items is not added to knapsack)
+            Node right = new Node(node.value, node.weight, node.estimate, level, node.path);
+            right.path[level] = 1;
+            // only add right node if the estimate is bigger than the current value
+            calcEstimate(right);
+            if (right.estimate > value)
+                BBTree.add(right);
+
+        }
         return 0;
     }
 
