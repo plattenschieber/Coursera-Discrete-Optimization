@@ -88,6 +88,7 @@ public class Solver {
         if ((long)numItems * (long)capacity < 100000000L)
             value = DPSolver();
         else 
+            BBTree = new Stack<Node>();
             value = BBSolver();
 
         
