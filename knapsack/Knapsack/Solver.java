@@ -109,25 +109,30 @@ public class Solver {
     }
 
 
-    private void calcBound (Node node)
+    private float calcBound (Node node)
     {
+    	int totalWeight;
+    	float result;
     	// cut the branch on non feasibility 
     	if (node.accWeight > kpCapacity) {
-    		node.bound = 0;
+    		return 0;
     	}
     	// calculate a new bound for this node 
     	else {
+    		totalWeight = node.accWeight;
+    		result = node.accValue;
     		int j = node.level+1;
     		node.bound = node.accValue;
-    		while (j<numItems && node.accWeight + items.get(j).weight <= kpCapacity) {
-    			node.accWeight += items.get(j).weight;
-    			node.bound += items.get(j).value;
+    		while (j<numItems && totalWeight + items.get(j).weight <= kpCapacity) {
+    			totalWeight += items.get(j).weight;
+    			result += items.get(j).value;
     			j++;
     		}
     		if (j<numItems)
     			// add a fraction of the last non-fitting item
-    			node.bound += (kpCapacity-node.accWeight) * items.get(j).value/(double)items.get(j).weight;
+    			result += (kpCapacity-node.accWeight) * items.get(j).value/(double)items.get(j).weight;
     	}
+    	return result;
     }
 
     private Node BBSolver () {
@@ -135,9 +140,8 @@ public class Solver {
         Node rootNode = new Node(numItems);
         // sort values by density
         items.sort(new valuePerWeightComparator());
-        // calculate the most basic bound (relax the capacity constraint completely)
-//        rootNode.bound = items.stream().mapToInt(m -> m.value).sum();
-        calcBound(rootNode);
+        // calculate a best possible bound, when allowing for fractional items
+        rootNode.bound = calcBound(rootNode);
         // add root to tree
         BBTree.push(rootNode);
 
@@ -147,7 +151,7 @@ public class Solver {
             int level = -1;
 
             // we expand the tree only in case of an good bound 
-            if (node.level+1 < numItems && node.bound > kpValue)
+            if (node.level+1 < numItems && calcBound(node) > kpValue)
                 level = node.level+1;
             // we are on the last level, check if it's the best solution so far
             else if(node.accWeight <= kpCapacity && node.accValue > kpValue){
@@ -162,16 +166,14 @@ public class Solver {
             Node left = new Node(node.accValue + items.get(level).value, node.accWeight + items.get(level).weight, node.bound, level, node.path);
             left.path[level] = 1;
             // only add left node if the bound is bigger than the current value
-            calcBound(left);
-            if (left.bound > kpValue)
+            if (calcBound(left) > kpValue)
                 BBTree.push(left);
 
             // check 'right' node (if items is not added to knapsack)
             Node right = new Node(node.accValue, node.accWeight, node.bound, level, node.path);
             right.path[level] = 0; // redundant, but readable
             // only add right node if the bound is bigger than the current value
-            calcBound(right);
-            if (right.bound > kpValue)
+            if (calcBound(right) > kpValue)
                 BBTree.push(right);
 
         }
