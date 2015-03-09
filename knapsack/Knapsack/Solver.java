@@ -128,15 +128,16 @@ public class Solver {
     }
 
     private Node BBSolver () {
+    	// this is our root
         Node rootNode = new Node(numItems);
         // sort values by density
         items.sort(new valuePerWeightComparator());
         // calculate the most basic estimate (relax the capacity constraint completely)
         rootNode.estimate = items.stream().mapToInt(m -> m.value).sum();
-
         // add root to tree
         BBTree.push(rootNode);
 
+        // traverse the tree
         while (!BBTree.isEmpty()) {
             Node node = BBTree.pop();
             int level = -1;
