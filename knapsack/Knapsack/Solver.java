@@ -112,7 +112,6 @@ public class Solver {
     private float calcBound (Node node)
     {
     	int totalWeight;
-    	float result;
     	// cut the branch on non feasibility 
     	if (node.accWeight > kpCapacity) {
     		return 0;
@@ -120,19 +119,18 @@ public class Solver {
     	// calculate a new bound for this node 
     	else {
     		totalWeight = node.accWeight;
-    		result = node.accValue;
     		int j = node.level+1;
     		node.bound = node.accValue;
     		while (j<numItems && totalWeight + items.get(j).weight <= kpCapacity) {
     			totalWeight += items.get(j).weight;
-    			result += items.get(j).value;
+    			node.bound += items.get(j).value;
     			j++;
     		}
     		if (j<numItems)
     			// add a fraction of the last non-fitting item
-    			result += (kpCapacity-node.accWeight) * items.get(j).value/(double)items.get(j).weight;
+    			node.bound += (kpCapacity-node.accWeight) * items.get(j).value/(double)items.get(j).weight;
     	}
-    	return result;
+    	return node.bound;
     }
 
     private Node BBSolver () {
