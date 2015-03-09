@@ -71,6 +71,7 @@ public class Solver {
         String[] firstLine = lines.get(0).split("\\s+");
         numItems = Integer.parseInt(firstLine[0]);
         kpCapacity = Integer.parseInt(firstLine[1]);
+        taken = new int[numItems];
         items = new ArrayList<Item>();
 
 
@@ -84,10 +85,6 @@ public class Solver {
           item.weight = Integer.parseInt(parts[1]);
           items.add(item);
         }
-
-        // a trivial greedy algorithm for filling the knapsack
-        // it takes numItems in-order until the knapsack is full
-        taken = new int[numItems];
 
         // calculate an optimal knapsack solution
         if ((long)numItems * (long)kpCapacity < 100000000L && !isDP)
