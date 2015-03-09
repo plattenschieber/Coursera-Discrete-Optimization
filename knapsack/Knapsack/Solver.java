@@ -129,6 +129,8 @@ public class Solver {
 
     private Node BBSolver () {
         Node rootNode = new Node(numItems);
+        // sort values by density
+        items.sort(new valuePerWeightComparator());
         // calculate the most basic estimate (relax the capacity constraint completely)
         rootNode.estimate = items.stream().mapToInt(m -> m.value).sum();
 
