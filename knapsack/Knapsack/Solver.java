@@ -1,4 +1,4 @@
-package Knapsack;
+package knapsack;
 
 import java.io.*;
 import java.util.List;
