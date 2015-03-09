@@ -15,17 +15,14 @@ import knapsack.Node;
  */
 public class Solver {
 
-    private int numItems;
-    private int kpCapacity;
-    private int kpValue;
-    private int[] values;
-    private int[] weights;
-    private int[] taken;
-	private Stack<Node> BBTree;
-    private Node solution;
-
+    int numItems;
+    int kpCapacity;
+    int kpValue;
+    int[] taken;
+	Stack<Node> BBTree;
+    Node solution;
     ArrayList<Item> items;
-    
+
     /**
      * The main class
      */
