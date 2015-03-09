@@ -3,7 +3,7 @@ package knapsack;
 import java.io.*;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Stack;
+import java.util.PriorityQueue;
 import knapsack.Item;
 import knapsack.Node;
 
@@ -18,7 +18,7 @@ public class Solver {
     int kpCapacity;
     int kpValue;
     int[] taken;
-	Stack<Node> BBTree;
+	PriorityQueue<Node> BBTree;
     Node solution;
     ArrayList<Item> items;
 
@@ -90,7 +90,7 @@ public class Solver {
         if ((long)numItems * (long)kpCapacity < 100000000L && isDP)
             kpValue = DPSolver();
         else {
-            BBTree = new Stack<Node>();
+            BBTree = new PriorityQueue<Node>();
             if(BBSolver() != null) {
             	kpValue = solution.accValue;
             	taken = solution.path;
@@ -141,11 +141,11 @@ public class Solver {
         // calculate a best possible bound, when allowing for fractional items
         rootNode.bound = calcBound(rootNode);
         // add root to tree
-        BBTree.push(rootNode);
+        BBTree.add(rootNode);
 
         // traverse the tree
         while (!BBTree.isEmpty()) {
-            Node node = BBTree.pop();
+            Node node = BBTree.poll();
             int level = -1;
 
             // we expand the tree only in case of an good bound 
@@ -165,14 +165,14 @@ public class Solver {
             left.path[level] = 1;
             // only add left node if the bound is bigger than the current value
             if (calcBound(left) > kpValue)
-                BBTree.push(left);
+                BBTree.add(left);
 
             // check 'right' node (if items is not added to knapsack)
             Node right = new Node(node.accValue, node.accWeight, node.bound, level, node.path);
             right.path[level] = 0; // redundant, but readable
             // only add right node if the bound is bigger than the current value
             if (calcBound(right) > kpValue)
-                BBTree.push(right);
+                BBTree.add(right);
 
         }
         for (int i=0; i<items.size(); i++){

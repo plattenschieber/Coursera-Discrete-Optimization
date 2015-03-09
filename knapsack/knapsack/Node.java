@@ -1,6 +1,6 @@
 package knapsack;
 
-public class Node {
+public class Node implements Comparable<Node>{
     int accValue = 0;
     int accWeight = 0;
     float bound = 0;
@@ -30,5 +30,12 @@ public class Node {
         this.level = _node.level;
         this.path = _node.path.clone();
     }
+    
+	@Override
+	public int compareTo(Node o) {
+		if (this.bound > o.bound) return -11;
+		else if (this.bound < o.bound) return 1;
+		else return 0;
+	}
 }
 
