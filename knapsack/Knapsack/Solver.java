@@ -91,8 +91,12 @@ public class Solver {
             kpValue = DPSolver();
         else {
             BBTree = new Stack<Node>();
-            kpValue = BBSolver();
-            taken = solution.path;
+            if(BBSolver() != null) {
+            	kpValue = solution.accValue;
+            	taken = solution.path;
+            }
+            else 
+            	System.out.println("Error finding a solution.");
         }
 
         
@@ -123,7 +127,7 @@ public class Solver {
     	}
     }
 
-    private int BBSolver () {
+    private Node BBSolver () {
         Node rootNode = new Node(numItems);
         // calculate the most basic estimate (relax the capacity constraint completely)
         rootNode.estimate = items.stream().mapToInt(m -> m.value).sum();
@@ -164,7 +168,8 @@ public class Solver {
                 BBTree.push(right);
 
         }
-        return solution.accValue;
+        // can be NULL 
+        return solution;
     }
 
     private int DPSolver () {
