@@ -3,7 +3,7 @@ package knapsack;
 public class Node {
     int accValue = 0;
     int accWeight = 0;
-    int estimate = 0;
+    float bound = 0;
     int level = -1;
     int[] path;
 
@@ -16,7 +16,7 @@ public class Node {
     	this.level = -1;
     	this.path = new int[size];
     }
-    public Node (int _value, int _weight, int _estimate, int _level, int[] _path) {
+    public Node (int _value, int _weight, float _bound, int _level, int[] _path) {
         this.accValue = _value;
         this.accWeight = _weight;
         this.estimate = _estimate;
