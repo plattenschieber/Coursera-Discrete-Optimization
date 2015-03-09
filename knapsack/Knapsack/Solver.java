@@ -86,8 +86,8 @@ public class Solver {
           items.add(item);
         }
 
-        // calculate an optimal knapsack solution
-        if ((long)numItems * (long)kpCapacity < 100000000L && !isDP)
+        // calculate an optimal knapsack solution with dynamic programming
+        if ((long)numItems * (long)kpCapacity < 100000000L && isDP)
             kpValue = DPSolver();
         else {
             BBTree = new Stack<Node>();
