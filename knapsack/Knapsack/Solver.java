@@ -109,21 +109,24 @@ public class Solver {
     }
 
 
-    private void calcEstimate (Node node)
+    private void calcBound (Node node)
     {
+    	// cut the branch on non feasibility 
     	if (node.accWeight > kpCapacity) {
-    		node.estimate = 0;
+    		node.bound = 0;
     	}
+    	// calculate a new bound for this node 
     	else {
     		int j = node.level+1;
-    		node.estimate = node.accValue;
+    		node.bound = node.accValue;
     		while (j<numItems && node.accWeight + items.get(j).weight <= kpCapacity) {
     			node.accWeight += items.get(j).weight;
-    			node.estimate += items.get(j).value;
+    			node.bound += items.get(j).value;
     			j++;
     		}
     		if (j<numItems)
-    			node.estimate += (kpCapacity-node.accWeight) * items.get(j).value/(double)items.get(j).weight;
+    			// add a fraction of the last non-fitting item
+    			node.bound += (kpCapacity-node.accWeight) * items.get(j).value/(double)items.get(j).weight;
     	}
     }
 
@@ -132,8 +135,9 @@ public class Solver {
         Node rootNode = new Node(numItems);
         // sort values by density
         items.sort(new valuePerWeightComparator());
-        // calculate the most basic estimate (relax the capacity constraint completely)
-        rootNode.estimate = items.stream().mapToInt(m -> m.value).sum();
+        // calculate the most basic bound (relax the capacity constraint completely)
+//        rootNode.bound = items.stream().mapToInt(m -> m.value).sum();
+        calcBound(rootNode);
         // add root to tree
         BBTree.push(rootNode);
 
@@ -142,8 +146,8 @@ public class Solver {
             Node node = BBTree.pop();
             int level = -1;
 
-            // we expand the tree only in case of an good estimate 
-            if (node.level+1 < numItems && node.estimate > kpValue)
+            // we expand the tree only in case of an good bound 
+            if (node.level+1 < numItems && node.bound > kpValue)
                 level = node.level+1;
             // we are on the last level, check if it's the best solution so far
             else if(node.accWeight <= kpCapacity && node.accValue > kpValue){
@@ -151,23 +155,23 @@ public class Solver {
                     solution = new Node(node);
                     continue;
             }
-            // last level and not feasible or bounded by estimate
+            // last level and not feasible or bounded by bound
             else continue;
             
             // check 'left' node (if item is added to knapsack)
-            Node left = new Node(node.accValue + items.get(level).value, node.accWeight + items.get(level).weight, node.estimate, level, node.path);
+            Node left = new Node(node.accValue + items.get(level).value, node.accWeight + items.get(level).weight, node.bound, level, node.path);
             left.path[level] = 1;
-            // only add left node if the estimate is bigger than the current value
-            calcEstimate(left);
-            if (left.estimate > kpValue)
+            // only add left node if the bound is bigger than the current value
+            calcBound(left);
+            if (left.bound > kpValue)
                 BBTree.push(left);
 
             // check 'right' node (if items is not added to knapsack)
-            Node right = new Node(node.accValue, node.accWeight, node.estimate, level, node.path);
+            Node right = new Node(node.accValue, node.accWeight, node.bound, level, node.path);
             right.path[level] = 0; // redundant, but readable
-            // only add right node if the estimate is bigger than the current value
-            calcEstimate(right);
-            if (right.estimate > kpValue)
+            // only add right node if the bound is bigger than the current value
+            calcBound(right);
+            if (right.bound > kpValue)
                 BBTree.push(right);
 
         }
