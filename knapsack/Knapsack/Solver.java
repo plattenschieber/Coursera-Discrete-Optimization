@@ -4,7 +4,6 @@ import java.io.*;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Stack;
-import java.util.stream.IntStream;
 import knapsack.Item;
 import knapsack.Node;
 
