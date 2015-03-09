@@ -80,7 +80,7 @@ public class Solver {
           String[] parts = line.split("\\s+");
           
           Item item = new Item();
-          item.id = i;
+          item.id = i-1;
           item.value = Integer.parseInt(parts[0]);
           item.weight = Integer.parseInt(parts[1]);
           items.add(item);
