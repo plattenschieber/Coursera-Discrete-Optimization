@@ -177,6 +177,10 @@ public class Solver {
                 BBTree.push(right);
 
         }
+        for (int i=0; i<items.size(); i++){
+        	taken[items.get(i).id] = solution.path[i];
+        }
+        solution.path = taken.clone();
         // can be NULL 
         return solution;
     }
