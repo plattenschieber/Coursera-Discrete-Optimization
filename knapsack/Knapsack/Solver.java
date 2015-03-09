@@ -109,11 +109,18 @@ public class Solver {
     {
     	if (node.accWeight > kpCapacity) {
     		node.estimate = 0;
-    		return;
     	}
-        // in case we don't take the current node, remove its value 
-        if (node.path[node.level] == 0)
-        	node.estimate -= values[node.level];
+    	else {
+    		int j = node.level+1;
+    		node.estimate = node.accValue;
+    		while (j<numItems && node.accWeight + items.get(j).weight <= kpCapacity) {
+    			node.accWeight += items.get(j).weight;
+    			node.estimate += items.get(j).value;
+    			j++;
+    		}
+    		if (j<numItems)
+    			node.estimate += (kpCapacity-node.accWeight) * items.get(j).value/(double)items.get(j).weight;
+    	}
     }
 
     private int BBSolver () {
