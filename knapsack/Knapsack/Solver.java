@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Stack;
 import java.util.stream.IntStream;
+import knapsack.Item;
 
 
 /**
@@ -22,6 +23,7 @@ public class Solver {
 	private Stack<Node> BBTree;
     private Node solution;
 
+    ArrayList<Item> items;
     
     /**
      * The main class
@@ -72,16 +74,18 @@ public class Solver {
         String[] firstLine = lines.get(0).split("\\s+");
         numItems = Integer.parseInt(firstLine[0]);
         kpCapacity = Integer.parseInt(firstLine[1]);
+        items = new ArrayList<Item>();
 
-        values = new int[numItems];
-        weights = new int[numItems];
 
         for(int i=1; i < numItems+1; i++){
           String line = lines.get(i);
           String[] parts = line.split("\\s+");
-
-          values[i-1] = Integer.parseInt(parts[0]);
-          weights[i-1] = Integer.parseInt(parts[1]);
+          
+          Item item = new Item();
+          item.id = i;
+          item.value = Integer.parseInt(parts[0]);
+          item.weight = Integer.parseInt(parts[1]);
+          items.add(item);
         }
 
         // a trivial greedy algorithm for filling the knapsack
@@ -151,7 +155,7 @@ public class Solver {
     private int BBSolver () {
         Node rootNode = new Node(numItems);
         // calculate the most basic estimate (relax the capacity constraint completely)
-        rootNode.estimate = IntStream.of(values).sum();
+        rootNode.estimate = items.stream().mapToInt(m -> m.value).sum();
 
         // add root to tree
         BBTree.push(rootNode);
@@ -173,7 +177,7 @@ public class Solver {
             else continue;
             
             // check 'left' node (if item is added to knapsack)
-            Node left = new Node(node.accValue + values[level], node.accWeight + weights[level], node.estimate, level, node.path);
+            Node left = new Node(node.accValue + items.get(level).value, node.accWeight + items.get(level).weight, node.estimate, level, node.path);
             left.path[level] = 1;
             // only add left node if the estimate is bigger than the current value
             calcEstimate(left);
@@ -200,9 +204,11 @@ public class Solver {
         // fill the table step-by-step
         for(int i=1; i <= numItems; i++){
             for (int j=0; j <= kpCapacity; j++) {
-                if (weights[i-1]<=j) {
+            	Item item = items.get(i-1);
+                if (item.weight<=j) {
                     //                    old best value,  sum of current accumulatedWeight and best value with reduced capacity
-                    table[j][i] = Math.max(table[j][i-1],  table[j-weights[i-1]][i-1] + values[i-1]);
+                    table[j][i] = Math.max(table[j][i-1], 
+                    					   table[j-item.weight][i-1] + item.value);
                 }
                 // if it doesn't fit, we take the best value so far
                 else table[j][i] = table[j][i-1];
@@ -214,9 +220,9 @@ public class Solver {
         for (int i=numItems; i > 0; i--){
             if (table[currentCap][i] > table[currentCap][i-1]){
                 taken[i-1] = 1;
-                kpValue += values[i-1];
+                kpValue += items.get(i-1).value;
                 // remove capacity from knapsack
-                currentCap -= weights[i-1];
+                currentCap -= items.get(i-1).weight;
             } 
             // this item hasn't been added to our knapsack
             else taken[i-1] = 0;
